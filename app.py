@@ -110,7 +110,7 @@ if __name__ == '__main__':
     #file_path='S5P_OFFL_L2__CO_____20230501T111601_20230501T125731_28745_03_020500_20230503T010442.nc'
 
 
-operations = ";".join([
+"""operations = ";".join([
     "tropospheric_NO2_column_number_density_validity>75",
     "derive(surface_wind_speed {time} [m/s])",
      "surface_wind_speed<5",
