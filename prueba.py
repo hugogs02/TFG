@@ -6,10 +6,6 @@ import datetime
 # Module to set filesystem paths appropriate for user's operating system
 from pathlib import Path
 
-# Modules to create interactive menus in Jupyter Notebook
-from IPython.display import display
-import ipywidgets as widgets
-
 
 # Enter product, data latency, observation start/end dates and domain boundaries for file search
 # Selections are made using interactive Jupyter Notebook widgets
