@@ -5,7 +5,7 @@ import dataTransform as dt
 if __name__ == '__main__':
     if len(sys.argv) != 5:
         print("Numero incorrecto de argumentos. [python3 app.py produto data_inicio data_fin ruta]")
-        print("Produtos: L2__CO____, L2__NO2___, L2__O3____', L2__SO2___, L2__HCHO__")
+        print("Produtos: L2__CO____, L2__NO2___, L2__O3____', L2__SO2___, L2__HCHO__, L2__CH4___")
         print("Formato de data: YYYY-MM-DD")
         sys.exit()
 

@@ -6,7 +6,7 @@ def transformaL3_CO(ruta, produto):
 
 # Funcion que transforma a nivel 3 os datos de NO2
 def transformaL3_NO2(ruta, produto):
-    """operations = ";".join([
+    operations = ";".join([
         "tropospheric_NO2_column_number_density_validity>75",
         "derive(surface_wind_speed {time} [m/s])",
          "surface_wind_speed<5",
@@ -37,7 +37,7 @@ def transformaL3_NO2(ruta, produto):
     no2_description = mean_no2.tropospheric_NO2_column_number_density.description
     no2_units = mean_no2.tropospheric_NO2_column_number_density.unit
 
-    gridlat = np.append(mean_no2.latitude_bounds.data[:,0], mean_no2.latitude_bounds.data[-1,1])
+    """gridlat = np.append(mean_no2.latitude_bounds.data[:,0], mean_no2.latitude_bounds.data[-1,1])
     gridlon = np.append(mean_no2.longitude_bounds.data[:,0], mean_no2.longitude_bounds.data[-1,1])
 
     colortable = cm.roma_r
@@ -79,6 +79,10 @@ def transformaL3_SO2(ruta, produto):
 def transformaL3_HCHO(ruta, produto):
     return None
 
+# Funcion que transforma a nivel 3 os datos de CH4
+def transformaL3_CH4(ruta, produto):
+    return None
+
 # Funcion xeral para transformar a nivel 3 o arquivo en 'ruta' para o produto 'produto'
 def transformaL3 (ruta, produto):
     if produto == "L2__CO____":
@@ -91,5 +95,7 @@ def transformaL3 (ruta, produto):
         transformaL3_SO2(ruta, produto)
     elif produto == "L2__HCHO__":
         transformaL3_HCHO(ruta, produto)
+    elif produto == ("L2__CH4___"):
+        transformaL3_CH4(ruta, produto)
     else:
         print("Produto incorrecto para transformar")

@@ -1,4 +1,5 @@
 from sentinelsat import SentinelAPI
+from sentinel5dl import search, download
 
 # Funcion que obten a lista e tamaño dos arquivos a descargar
 def listaArquivos(latW, latE, latS, latN, inicio, fin, parametro, latencia):
@@ -8,8 +9,14 @@ def listaArquivos(latW, latE, latS, latN, inicio, fin, parametro, latencia):
     # Obtemos a lista de arquivos para unha rexion e datas especificas
     footprint = 'POLYGON((' + latW + ' ' + latS + ',' + latE + ' ' + latS + ',' + latE + ' ' + latN + ',' + latW + ' ' + latN + ',' + latW + ' ' + latS + '))'
     try:
-        produtos = api.query(area=footprint, date=(inicio + 'T00:00:00Z', fin + 'T23:59:59Z'),
-                             producttype=parametro, processingmode=latencia)
+        produtos = api.query(area=footprint, date=(inicio + 'T00:00:00Z', fin + 'T23:59:59Z'), producttype=parametro, processingmode=latencia)
+        """produtos=search(polygon='POLYGON((7.8 49.3,13.4 49.3,13.4 52.8,7.8 52.8,7.8 49.3))',
+        begin_ts=inicio + 'T00:00:00Z',
+        end_ts=fin + 'T23:59:59Z',
+        product=parametro,
+        processing_level='L2',
+        processing_mode=latencia)
+        print(produtos)"""
     except:
         print('Error connectandose o servidor de s5phub. Execute o codigo de novo.')
 
