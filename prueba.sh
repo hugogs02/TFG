@@ -1,6 +1,0 @@
-python app.py "L2__CO____" "2023-09-01" "2023-09-07" "data/unproc/CO/" "data/CO/"
-python app.py "L2__NO2___" "2023-09-01" "2023-09-07" "data/unproc/NO2/" "data/NO2/"
-python app.py "L2__O3____" "2023-09-01" "2023-09-07" "data/unproc/O3/" "data/O3/"
-python app.py "L2__SO2___" "2023-09-01" "2023-09-07" "data/unproc/SO2/" "data/SO2/"
-python app.py "L2__HCHO__" "2023-09-01" "2023-09-07" "data/unproc/HCHO/" "data/HCHO/"
-python app.py "L2__CH4___" "2023-09-01" "2023-09-07" "data/unproc/CH4/" "data/CH4/"

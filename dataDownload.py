@@ -82,12 +82,12 @@ def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDesc
     latS = str(35.553679)
     latW = str(-9.492118)
     latE = str(4.419918)
-    aoi= 'POLYGON((-9.492118 44.454713,4.419918 42.6636,5.112055 37.148517,-10.166057 35.371313,-9.492118 44.454713))'
+    aoi= "POLYGON((-9.492118 44.454713,4.419918 42.6636,5.112055 37.148517,-10.166057 35.371313,-9.492118 44.454713))"
 
     # make the request
     jsonf=requests.get(f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))') and Collection/Name eq 'SENTINEL-5P' and contains(Name,'S5P_OFFL_{parametro}') and ContentDate/Start gt {inicio}T00:00:00.000Z and ContentDate/Start lt {fin}T00:00:00.000Z").json()
     df = pd.DataFrame.from_dict(jsonf['value'])
-    print(df)
+    print(f"\nDescargaranse {len(df)} arquivos.")
 
     keycloak_token = get_keycloak('hugo.gomez.sabucedo@rai.usc.es', 'Hugotfg&2023')
 
@@ -102,6 +102,6 @@ def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDesc
         pr = df.Id.values[i]
         url = f"https://zipper.dataspace.copernicus.eu/odata/v1/Products({pr})/$value"
         response = session.get(url, headers=headers, stream=True)
-        print(f"\nDescargando {df.Name.values[i][:-5]}.nc")
+        print(f"Descargando {df.Name.values[i][:-5]}.nc")
         with open(f"{download_dir}{df.Name.values[i][:-5]}.nc", 'wb') as p:
             p.write(response.content)
