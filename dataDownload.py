@@ -19,62 +19,6 @@ def get_keycloak(username: str, password: str) -> str:
             f"Keycloak token creation failed. Response from the server was: {r.json()}")
     return r.json()["access_token"]
 
-"""
-# Funcion que obten a lista e tamaño dos arquivos a descargar
-def listaArquivos(latW, latE, latS, latN, inicio, fin, parametro):
-    # Conexion a S5P Hub con credenciais de invitado
-    api = SentinelAPI('s5pguest', 's5pguest', 'https://s5phub.copernicus.eu/dhus')
-
-    # Obtemos a lista de arquivos para unha rexion e datas especificas
-    footprint = 'POLYGON((' + latW + ' ' + latS + ',' + latE + ' ' + latS + ',' + latE + ' ' + latN + ',' + latW + ' ' + latN + ',' + latW + ' ' + latS + '))'
-    try:
-        produtos = api.query(area=footprint, date=(inicio + 'T00:00:00Z', fin + 'T23:59:59Z'), producttype=parametro, processingmode='Offline')
-    except:
-        print('Error connectandose o servidor de s5phub. Execute o codigo de novo.')
-
-    # Convertimos o resultado a dataframe para obter os nomes e tamaños dos arquivos
-    produtosDF = api.to_dataframe(produtos)
-
-    if len(produtosDF) > 0:
-        nomes = produtosDF['filename'].tolist()
-        tamanos = produtosDF['size'].tolist()
-    else:
-        nomes = []
-        tamanos = []
-
-    return nomes, tamanos, produtos
-
-
-# Funcion que descarga os produtos indicados en produtos e os garda en directorio
-def descargaArquivos(produtos, directorio):
-    # Conexion a S5P Hub con credenciais de invitado
-    api = SentinelAPI('s5pguest', 's5pguest', 'https://s5phub.copernicus.eu/dhus')
-
-    # Descargamos os arquivos
-    try:
-        api.download_all(produtos, directorio)
-    except KeyboardInterrupt:
-        print('\nO usuario interrompeu a descarga.')
-
-
-# Funcion que imprime os arquivos a descargar
-def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorio):
-    # Obtemos a lista de arquivos a descargar
-    listaNomes, listaTamanos, produtos = listaArquivos(latW, latE, latS, latN, inicio, fin, parametro, 'Offline')
-
-    # Imprimimos os nomes e tamaños dos arquivos
-    if len(listaNomes) > 0:
-        print('\nDescargaranse os seguintes ' + str(len(listaNomes)) + ' arquivos no directorio: ', directorio)
-        for arq, tam in zip(listaNomes, listaTamanos):
-            print(arq, ' (', tam, ')', sep='')
-
-        # Descargamos os arquivos
-        #descargaArquivos(produtos, directorio)
-    else:
-        print('\nNon se obtivo ningun arquivo. Por favor, intenteo de novo.')
-"""
-
-from creds import *
 
 def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDescarga):
     # set your area of interest
@@ -100,8 +44,15 @@ def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDesc
 
     for i in range(len(df)):
         pr = df.Id.values[i]
-        url = f"https://zipper.dataspace.copernicus.eu/odata/v1/Products({pr})/$value"
-        response = session.get(url, headers=headers, stream=True)
-        print(f"Descargando {df.Name.values[i][:-5]}.nc")
-        with open(f"{download_dir}{df.Name.values[i][:-5]}.nc", 'wb') as p:
-            p.write(response.content)
+        prName = df.Name.values[i][:-5]
+
+        url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({pr})/$value"
+        response = session.get(url, allow_redirects=False)
+        while response.status_code in (301, 302, 303, 307):
+            url = response.headers['Location']
+            response = session.get(url, allow_redirects=False)
+
+        file = session.get(url, verify=False, allow_redirects=True)
+        print("Descargando "+prName)
+        with open(f"{download_dir}{prName}.zip", 'wb') as p:
+            p.write(file.content)

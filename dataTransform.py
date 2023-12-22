@@ -1,4 +1,4 @@
-import harp, os, glob
+import harp, os, glob, datetime
 
 # Funcion que transforma a nivel 3 os datos de CO
 def transformaL3_CO(rutaIn, rutaOut):
@@ -25,19 +25,23 @@ def transformaL3_NO2(rutaIn, rutaOut):
         "squash(time, (latitude, longitude, latitude_bounds, longitude_bounds))",
         "bin()"
     ])
+    #rutaIn = rutaIn.replace("/","\\")
+    os.chdir(os.path.join(os.getcwd(), rutaIn))
 
-    #files_in="S5P_OFFL_L2__NO2____202110*.nc"
-    """files_in="S5P_OFFL_L2__CO_____20230601T113651_20230601T131821_29185_03_020500_20230603T073706.nc"
-    print(files_in)
-    mean_no2=harp.import_product(files_in, operations, post_operations=reduce_operations)
+    files_input = sorted(glob.glob('S5P_OFFL_*.nc'))
 
-    harp.export_product(mean_no2, 's5p-NO2_L3_averaged_11-17_Oct2021.nc')
+    Converted_NO2 = harp.import_product(files_input, operations=operations, reduce_operations=reduce_operations)
 
-    no2 = mean_no2.tropospheric_NO2_column_number_density.data
+    print("All files imported")
+    #harp.export_product(Converted_NO2, ('2023-09-w1-n02.nc'), file_format="netCDF")
+    # harp.export_product(Converted_SO2, 'S5P_SO2_L3_averaged_31Jul-07Aug2023.nc',file_format="net")
+
+
+    """no2 = mean_no2.tropospheric_NO2_column_number_density.data
     no2_description = mean_no2.tropospheric_NO2_column_number_density.description
-    no2_units = mean_no2.tropospheric_NO2_column_number_density.unit"""
+    no2_units = mean_no2.tropospheric_NO2_column_number_density.unit
 
-    """gridlat = np.append(mean_no2.latitude_bounds.data[:,0], mean_no2.latitude_bounds.data[-1,1])
+    gridlat = np.append(mean_no2.latitude_bounds.data[:,0], mean_no2.latitude_bounds.data[-1,1])
     gridlon = np.append(mean_no2.longitude_bounds.data[:,0], mean_no2.longitude_bounds.data[-1,1])
 
     colortable = cm.roma_r
@@ -81,22 +85,19 @@ def transformaL3_SO2(rutaIn, rutaOut):
         "squash(time, (latitude, longitude, latitude_bounds, longitude_bounds))",
         "bin()"
     ])
-    input_path='data/unproc/SO2/'
-    export_path='/data/SO2/'
-    list_files = sorted(os.listdir(input_path))
-    files_input = sorted(glob.glob(input_path+'S5P_OFFL_*.nc'))
-    for file in list_files:
-        if file.startswith("S5P_OFFL_") == False:
-            list_files.remove(file)
 
-    for i in range(len(files_input)):
-        Converted_SO2 = harp.import_product(files_input[i], operations=operations, reduce_operations=reduce_operations)
+    # rutaIn = rutaIn.replace("/","\\")
+    os.chdir(os.path.join(os.getcwd(), rutaIn))
 
+    files_input = sorted(glob.glob('S5P_OFFL_*.nc'))
+
+    Converted_SO2 = harp.import_product(files_input, operations=operations, reduce_operations=reduce_operations)
+
+    print("All files imported")
     print("All files imported")
     harp.export_product(Converted_SO2, ('2023-09-w1.nc'), file_format="netCDF")
     #harp.export_product(Converted_SO2, 'S5P_SO2_L3_averaged_31Jul-07Aug2023.nc',file_format="net")
 
-    return None
 
 # Funcion que transforma a nivel 3 os datos de HCHO
 def transformaL3_HCHO(rutaIn, rutaOut):
