@@ -1,4 +1,5 @@
-import harp, os, glob, datetime
+import harp, os, glob, datetime, zipfile36 as zipfile, shutil
+#os.path.altsep= '\\'
 
 # Funcion que transforma a nivel 3 os datos de CO
 def transformaL3_CO(rutaIn, rutaOut):
@@ -28,10 +29,11 @@ def transformaL3_NO2(rutaIn, rutaOut):
     #rutaIn = rutaIn.replace("/","\\")
     os.chdir(os.path.join(os.getcwd(), rutaIn))
 
-    files_input = sorted(glob.glob('S5P_OFFL_*.nc'))
+    files_input = sorted(glob.glob('/S5P_OFFL_*.nc'))
 
-    Converted_NO2 = harp.import_product(files_input, operations=operations, reduce_operations=reduce_operations)
+    #Converted_NO2 = harp.import_product(files_input, operations=operations, reduce_operations=reduce_operations)
 
+    print(files_input)
     print("All files imported")
     #harp.export_product(Converted_NO2, ('2023-09-w1-n02.nc'), file_format="netCDF")
     # harp.export_product(Converted_SO2, 'S5P_SO2_L3_averaged_31Jul-07Aug2023.nc',file_format="net")
@@ -89,7 +91,7 @@ def transformaL3_SO2(rutaIn, rutaOut):
     # rutaIn = rutaIn.replace("/","\\")
     os.chdir(os.path.join(os.getcwd(), rutaIn))
 
-    files_input = sorted(glob.glob('S5P_OFFL_*.nc'))
+    files_input = sorted(glob.glob('*.nc'))
 
     Converted_SO2 = harp.import_product(files_input, operations=operations, reduce_operations=reduce_operations)
 

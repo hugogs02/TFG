@@ -1,4 +1,4 @@
-import sys
+import sys, glob, zipfile
 import dataDownload as dd
 import dataTransform as dt
 
@@ -16,7 +16,16 @@ def run(produto, start_date, end_date, rutaIn, rutaOut):
 
     dd.obtenArquivos(lon_W, lon_E, lat_S, lat_N, start_date, end_date, produto, rutaIn)
 
-    #xdt.transformaL3(rutaIn, rutaOut, produto)
+    for f in glob.glob('*.zip'):
+        print(f"{f}.zip")
+        try:
+            with zipfile.ZipFile(f"{f}.zip", 'r') as e:
+                # e.extractall(rutaIn)
+                a='a'
+        except zipfile.BadZipfile:
+            print(f"Warning: Encountered a BadZipFile exception, but attempting extraction anyway.")
+
+    #dt.transformaL3(rutaIn, rutaOut, produto)
 
     #print("Data averaged correctly")
 

@@ -1,7 +1,6 @@
-from sentinelsat import SentinelAPI
-from sentinel5dl import search, download
+import zipfile
 from datetime import date
-import os, requests
+import os, requests, hashlib
 import pandas as pd
 
 def get_keycloak(username: str, password: str) -> str:
@@ -19,13 +18,15 @@ def get_keycloak(username: str, password: str) -> str:
             f"Keycloak token creation failed. Response from the server was: {r.json()}")
     return r.json()["access_token"]
 
+def checkmd5(filename):
+    omd5=hashlib.md5(open(filename,'rb').read()).hexdigest()
+    with open(filename,'rb') as f:
+        nmd5=hashlib.md5(f.read()).hexdigest()
+
+    return omd5==nmd5
 
 def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDescarga):
     # set your area of interest
-    latN = str(44.454713)
-    latS = str(35.553679)
-    latW = str(-9.492118)
-    latE = str(4.419918)
     aoi= "POLYGON((-9.492118 44.454713,4.419918 42.6636,5.112055 37.148517,-10.166057 35.371313,-9.492118 44.454713))"
 
     # make the request
@@ -46,13 +47,21 @@ def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDesc
         pr = df.Id.values[i]
         prName = df.Name.values[i][:-5]
 
-        url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({pr})/$value"
-        response = session.get(url, allow_redirects=False)
-        while response.status_code in (301, 302, 303, 307):
-            url = response.headers['Location']
-            response = session.get(url, allow_redirects=False)
-
-        file = session.get(url, verify=False, allow_redirects=True)
         print("Descargando "+prName)
-        with open(f"{download_dir}{prName}.zip", 'wb') as p:
-            p.write(file.content)
+        if not os.path.isfile(f"{download_dir}{prName}.zip"):
+
+            url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({pr})/$value"
+            response = session.get(url, allow_redirects=False)
+            while response.status_code in (301, 302, 303, 307):
+                url = response.headers['Location']
+                response = session.get(url, allow_redirects=False)
+
+            file = session.get(url, verify=False, allow_redirects=True)
+            with open(f"{download_dir}{prName}.zip", 'wb') as p:
+                p.write(file.content)
+                if(checkmd5(f"{download_dir}{prName}.zip")==False):
+                    print("md5 check erroneo. Abortando programa...")
+                    exit()
+                p.close()
+
+        print("ok")
