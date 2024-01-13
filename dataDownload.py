@@ -27,10 +27,10 @@ def checkmd5(filename):
 
 def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDescarga):
     # set your area of interest
-    aoi= "POLYGON((-9.492118 44.454713,4.419918 42.6636,5.112055 37.148517,-10.166057 35.371313,-9.492118 44.454713))"
+    aoi= "POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))"
 
     # make the request
-    jsonf=requests.get(f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))') and Collection/Name eq 'SENTINEL-5P' and contains(Name,'S5P_OFFL_{parametro}') and ContentDate/Start gt {inicio}T00:00:00.000Z and ContentDate/Start lt {fin}T00:00:00.000Z").json()
+    jsonf=requests.get(f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;{aoi}') and Collection/Name eq 'SENTINEL-5P' and contains(Name,'S5P_OFFL_{parametro}') and ContentDate/Start gt {inicio}T00:00:00.000Z and ContentDate/Start lt {fin}T00:00:00.000Z").json()
     df = pd.DataFrame.from_dict(jsonf['value'])
     print(f"\nDescargaranse {len(df)} arquivos.")
 
@@ -47,9 +47,8 @@ def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDesc
         pr = df.Id.values[i]
         prName = df.Name.values[i][:-5]
 
-        print("Descargando "+prName)
-        if not os.path.isfile(f"{download_dir}{prName}.zip"):
-
+        print("Descargando "+prName+" ("+pr+")")
+        if not os.path.isfile(f"{directorioDescarga}{prName}.zip"):
             url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({pr})/$value"
             response = session.get(url, allow_redirects=False)
             while response.status_code in (301, 302, 303, 307):
@@ -57,11 +56,8 @@ def obtenArquivos(latW, latE, latS, latN, inicio, fin, parametro, directorioDesc
                 response = session.get(url, allow_redirects=False)
 
             file = session.get(url, verify=False, allow_redirects=True)
-            with open(f"{download_dir}{prName}.zip", 'wb') as p:
+            with open(f"{directorioDescarga}{prName}.zip", 'wb') as p:
                 p.write(file.content)
-                if(checkmd5(f"{download_dir}{prName}.zip")==False):
-                    print("md5 check erroneo. Abortando programa...")
-                    exit()
-                p.close()
 
-        print("ok")
+            p.close()
+

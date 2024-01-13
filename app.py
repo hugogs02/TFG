@@ -20,7 +20,7 @@ def run(produto, start_date, end_date, rutaIn, rutaOut):
         print(f"{f}.zip")
         try:
             with zipfile.ZipFile(f"{f}.zip", 'r') as e:
-                # e.extractall(rutaIn)
+                e.extractall(rutaIn)
                 a='a'
         except zipfile.BadZipfile:
             print(f"Warning: Encountered a BadZipFile exception, but attempting extraction anyway.")
@@ -32,7 +32,7 @@ def run(produto, start_date, end_date, rutaIn, rutaOut):
 if __name__ == '__main__':
     if len(sys.argv) != 6:
         print("Numero incorrecto de argumentos. [python3 app.py produto data_inicio data_fin ruta_descarga ruta_procesado]")
-        print("Produtos: L2__CO____, L2__NO2___, L2__O3____, L2__SO2___, L2__HCHO__, L2__CH4___")
+        print("Produtos: L2__CO____, L2__NO2___, L2__O3____, L2__SO2___, L2__CH4___")
         print("Formato de data: YYYY-MM-DD")
         sys.exit()
 
