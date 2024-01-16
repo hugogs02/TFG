@@ -8,13 +8,10 @@ import dataTransform as dt
 #   rutaIn: a ruta onde se descargaran os arquivos obtidos de TROPOMI
 #   rutaOut: a ruta onde se almacenaran os arquivos procesados de nivel 3
 def run(produto, start_date, end_date, rutaIn, rutaOut):
-    # Coordenadas da busca
-    lat_N = str(44.52157244578214)
-    lat_S = str(35.55367980635542)
-    lon_W = str(-10.177733302116385)
-    lon_E = str(4.798831343650816)
+    # Area de interese da busca
+    aoi= "POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))"
 
-    dd.obtenArquivos(lon_W, lon_E, lat_S, lat_N, start_date, end_date, produto, rutaIn)
+    dd.obtenArquivos(aoi, start_date, end_date, produto, rutaIn)
 
     for f in glob.glob('*.zip'):
         print(f"{f}.zip")
