@@ -101,10 +101,6 @@ def transformaL3_SO2(rutaIn, rutaOut):
     #harp.export_product(Converted_SO2, 'S5P_SO2_L3_averaged_31Jul-07Aug2023.nc',file_format="net")
 
 
-# Funcion que transforma a nivel 3 os datos de HCHO
-def transformaL3_HCHO(rutaIn, rutaOut):
-    return None
-
 # Funcion que transforma a nivel 3 os datos de CH4
 def transformaL3_CH4(rutaIn, rutaOut):
     return None
@@ -121,8 +117,6 @@ def transformaL3 (rutaIn, rutaOut, produto):
         transformaL3_O3(rutaIn, rutaOut)
     elif produto == "L2__SO2___":
         transformaL3_SO2(rutaIn, rutaOut)
-    elif produto == "L2__HCHO__":
-        transformaL3_HCHO(rutaIn, rutaOut)
     elif produto == ("L2__CH4___"):
         transformaL3_CH4(rutaIn, rutaOut)
     else:

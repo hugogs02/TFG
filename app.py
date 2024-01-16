@@ -1,4 +1,6 @@
-import sys, glob, zipfile
+import sys
+from dateutil.parser import parse
+
 import dataDownload as dd
 import dataTransform as dt
 
@@ -7,20 +9,23 @@ import dataTransform as dt
 #   start_date, end_date: as datas de inicio e fin da busca para a descarga de datos
 #   rutaIn: a ruta onde se descargaran os arquivos obtidos de TROPOMI
 #   rutaOut: a ruta onde se almacenaran os arquivos procesados de nivel 3
-def run(produto, start_date, end_date, rutaIn, rutaOut):
+def run(produto, dataInicio, dataFin, rutaIn, rutaOut):
+    try:
+        parse(dataInicio)
+        parse(dataFin)
+    except ValueError:
+        sys.exit(f"O formato de datas e incorrecto")
+
+    if produto not in ["L2__CO____", "L2__NO2___", "L2__O3____", "L2__SO2___", "L2__CH4___"]:
+        sys.exit(f"O produto {sys.argv[1]} non e un produto valido.")
+    elif parse(dataInicio)>parse(dataFin):
+        sys.exit(f"A data de inicio debe ser anterior a data de fin.")
+
+
     # Area de interese da busca
     aoi= "POLYGON((12.655118166047592 47.44667197521409,21.39065656328509 48.347694733853245,28.334291357162826 41.877123516783655,17.47086198383573 40.35854475076158,12.655118166047592 47.44667197521409))"
 
-    dd.obtenArquivos(aoi, start_date, end_date, produto, rutaIn)
-
-    for f in glob.glob('*.zip'):
-        print(f"{f}.zip")
-        try:
-            with zipfile.ZipFile(f"{f}.zip", 'r') as e:
-                e.extractall(rutaIn)
-                a='a'
-        except zipfile.BadZipfile:
-            print(f"Warning: Encountered a BadZipFile exception, but attempting extraction anyway.")
+    dd.obtenArquivos(aoi, dataInicio, dataFin, produto, rutaIn)
 
     #dt.transformaL3(rutaIn, rutaOut, produto)
 
