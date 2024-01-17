@@ -24,7 +24,8 @@ def get_keycloak(username, password):
     return r.json()["access_token"]
 
 
-def descargaArquivo(id, nome, directorio, token):
+def descargaArquivo(id, nome, directorio):
+    token = get_keycloak('hugo.gomez.sabucedo@rai.usc.es', 'Hugotfg&2023')
     headers = {"Authorization": f"Bearer {token}"}
     session = requests.Session()
     session.headers.update(headers)
@@ -75,16 +76,11 @@ def obtenArquivos(aoi, inicio, fin, parametro, directorioDescarga):
 
         print("Descargando "+prName+" ("+prId+")")
 
-        token = get_keycloak('hugo.gomez.sabucedo@rai.usc.es', 'Hugotfg&2023')
-
         if not os.path.isfile(f"{directorioDescarga}{prName}.zip"):
-            descargaArquivo(prId, prName, directorioDescarga, token)
+            descargaArquivo(prId, prName, directorioDescarga)
 
         descomprimeArquivo(directorioDescarga, prName)
 
     for f in glob.glob(directorioDescarga+'**/*.nc', recursive=True):
         shutil.move(f, directorioDescarga)
         shutil.rmtree(os.path.dirname(f))
-
-    #shutil.move(f"{directorio}{nome}/{nome}.nc", directorio)
-    #shutil.rmtree(f"{directorio}{nome}")

@@ -1,5 +1,4 @@
-import harp, os, glob, datetime, zipfile36 as zipfile, shutil
-#os.path.altsep= '\\'
+import harp, os, glob
 
 # Funcion que transforma a nivel 3 os datos de CO
 def transformaL3_CO(rutaIn, rutaOut):
