@@ -1,5 +1,10 @@
 import harp, os, glob
 
+def obtenListaProdutos(rutaIn, produto):
+    lista=''
+
+    return lista
+
 # Funcion que transforma a nivel 3 os datos de CO
 def transformaL3_CO(rutaIn, rutaOut):
     return None

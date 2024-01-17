@@ -76,11 +76,14 @@ def obtenArquivos(aoi, inicio, fin, parametro, directorioDescarga):
 
         print("Descargando "+prName+" ("+prId+")")
 
-        if not os.path.isfile(f"{directorioDescarga}{prName}.zip"):
+        if not (os.path.isfile(f"{directorioDescarga}{prName}.zip") or len(glob.glob(f"{directorioDescarga}{prName}*.nc"))!=0):
             descargaArquivo(prId, prName, directorioDescarga)
 
-        descomprimeArquivo(directorioDescarga, prName)
+        if os.path.isfile(f"{directorioDescarga}{prName}.zip"):
+            descomprimeArquivo(directorioDescarga, prName)
 
     for f in glob.glob(directorioDescarga+'**/*.nc', recursive=True):
-        shutil.move(f, directorioDescarga)
-        shutil.rmtree(os.path.dirname(f))
+        if directorioDescarga==os.path.dirname(f):
+            shutil.move(f, directorioDescarga)
+            shutil.rmtree(os.path.dirname(f))
+
