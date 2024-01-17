@@ -1,4 +1,4 @@
-import os, requests, hashlib, glob, zipfile
+import os, requests, zipfile, shutil, glob
 import pandas as pd
 
 def get_keycloak(username, password):
@@ -29,20 +29,20 @@ def descargaArquivo(id, nome, directorio, token):
     session = requests.Session()
     session.headers.update(headers)
 
-    if not os.path.isfile(f"{directorio}{nome}.zip"):
-        url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({id})/$value"
-        response = session.get(url, headers=headers, allow_redirects=False)
-        while response.status_code in (301, 302, 303, 307):
-            url = response.headers['Location']
-            response = session.get(url, allow_redirects=False)
 
-        if response.status_code in (200, 308):
-            file = session.get(url, headers=headers, verify=True, allow_redirects=True)
-            with open(f"{directorio}{nome}.zip", 'wb') as f:
-                f.write(file.content)
-                f.close()
-        else:
-            print(f"Erro na descarga. Código de resposta do servidor: {str(response.status_code)}")
+    url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({id})/$value"
+    response = session.get(url, headers=headers, allow_redirects=False)
+    while response.status_code in (301, 302, 303, 307):
+        url = response.headers['Location']
+        response = session.get(url, allow_redirects=False)
+
+    if response.status_code in (200, 308):
+        file = session.get(url, headers=headers, verify=True, allow_redirects=True)
+        with open(f"{directorio}{nome}.zip", 'wb') as f:
+            f.write(file.content)
+            f.close()
+    else:
+        print(f"Erro na descarga. Código de resposta do servidor: {str(response.status_code)}")
 
 
 def descomprimeArquivo(directorio, nome):
@@ -77,6 +77,14 @@ def obtenArquivos(aoi, inicio, fin, parametro, directorioDescarga):
 
         token = get_keycloak('hugo.gomez.sabucedo@rai.usc.es', 'Hugotfg&2023')
 
-        descargaArquivo(prId, prName, directorioDescarga, token)
+        if not os.path.isfile(f"{directorioDescarga}{prName}.zip"):
+            descargaArquivo(prId, prName, directorioDescarga, token)
 
         descomprimeArquivo(directorioDescarga, prName)
+
+    for f in glob.glob(directorioDescarga+'**/*.nc', recursive=True):
+        shutil.move(f, directorioDescarga)
+        shutil.rmtree(os.path.dirname(f))
+
+    #shutil.move(f"{directorio}{nome}/{nome}.nc", directorio)
+    #shutil.rmtree(f"{directorio}{nome}")
