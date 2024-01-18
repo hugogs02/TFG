@@ -1,16 +1,18 @@
 import harp, os, glob
 
 def obtenListaProdutos(rutaIn, produto):
-    lista=''
+    lista=[]
+    for f in glob.glob(rutaIn+'*'+produto+'*.nc'):
+        lista.append(f)
 
     return lista
 
 # Funcion que transforma a nivel 3 os datos de CO
-def transformaL3_CO(rutaIn, rutaOut):
+def transformaL3_CO(arquivos, rutaOut):
     return None
 
 # Funcion que transforma a nivel 3 os datos de NO2
-def transformaL3_NO2(rutaIn, rutaOut):
+def transformaL3_NO2(arquivos, rutaOut):
     operations = ";".join([
         "tropospheric_NO2_column_number_density_validity>75",
         "derive(surface_wind_speed {time} [m/s])",
@@ -19,25 +21,26 @@ def transformaL3_NO2(rutaIn, rutaOut):
         "derive(datetime_start {time} [days since 2000-01-01])",
         "derive(datetime_stop {time}[days since 2000-01-01])",
         "exclude(datetime_length)",
-        "bin_spatial(51,33.50,0.02,51,-118.5,0.02)",
+        "bin_spatial(300, -10, 0.05, 200, 35, 0.05)",
         "derive(tropospheric_NO2_column_number_density [Pmolec/cm2])",
         "derive(latitude {latitude})",
         "derive(longitude {longitude})",
         "count>0"
     ])
 
-    reduce_operations=";".join([
+    reduce_operations = ";".join([
         "squash(time, (latitude, longitude, latitude_bounds, longitude_bounds))",
         "bin()"
     ])
-    #rutaIn = rutaIn.replace("/","\\")
-    os.chdir(os.path.join(os.getcwd(), rutaIn))
 
-    files_input = sorted(glob.glob('/S5P_OFFL_*.nc'))
+    #Converted_NO2 = harp.import_product(arquivos, operations=operations, reduce_operations=reduce_operations)
+    for f in arquivos:
+        try:
+            #prods = harp.import_product(arquivos, operations=operations, reduce_operations=reduce_operations)
+            a=1
+        except harp.NoDataError:
+            print(f"No data en {f}")
 
-    #Converted_NO2 = harp.import_product(files_input, operations=operations, reduce_operations=reduce_operations)
-
-    print(files_input)
     print("All files imported")
     #harp.export_product(Converted_NO2, ('2023-09-w1-n02.nc'), file_format="netCDF")
     # harp.export_product(Converted_SO2, 'S5P_SO2_L3_averaged_31Jul-07Aug2023.nc',file_format="net")
@@ -78,11 +81,11 @@ def transformaL3_NO2(rutaIn, rutaOut):
     plt.show()"""
 
 # Funcion que transforma a nivel 3 os datos de O3
-def transformaL3_O3(rutaIn, rutaOut):
+def transformaL3_O3(arquivos, rutaOut):
     return None
 
 # Funcion que transforma a nivel 3 os datos de SO2
-def transformaL3_SO2(rutaIn, rutaOut):
+def transformaL3_SO2(arquivos, rutaOut):
     operations=";".join([
         #"SO2_column_number_density_validity>50",
         #"count>0"
@@ -106,22 +109,24 @@ def transformaL3_SO2(rutaIn, rutaOut):
 
 
 # Funcion que transforma a nivel 3 os datos de CH4
-def transformaL3_CH4(rutaIn, rutaOut):
+def transformaL3_CH4(arquivos, rutaOut):
     return None
 
 
 
 # Funcion xeral para transformar a nivel 3 o arquivo en 'ruta' para o produto 'produto'
 def transformaL3 (rutaIn, rutaOut, produto):
+    listaArquivos=obtenListaProdutos(rutaIn, produto)
+
     if produto == "L2__CO____":
-        transformaL3_CO(rutaIn, rutaOut)
+        transformaL3_CO(listaArquivos, rutaOut)
     elif produto == "L2__NO2___":
-        transformaL3_NO2(rutaIn, rutaOut)
+        transformaL3_NO2(listaArquivos, rutaOut)
     elif produto == "L2__O3____":
-        transformaL3_O3(rutaIn, rutaOut)
+        transformaL3_O3(listaArquivos, rutaOut)
     elif produto == "L2__SO2___":
-        transformaL3_SO2(rutaIn, rutaOut)
+        transformaL3_SO2(listaArquivos, rutaOut)
     elif produto == ("L2__CH4___"):
-        transformaL3_CH4(rutaIn, rutaOut)
+        transformaL3_CH4(listaArquivos, rutaOut)
     else:
         print("Produto incorrecto para transformar")

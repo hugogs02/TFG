@@ -83,7 +83,7 @@ def obtenArquivos(aoi, inicio, fin, parametro, directorioDescarga):
             descomprimeArquivo(directorioDescarga, prName)
 
     for f in glob.glob(directorioDescarga+'**/*.nc', recursive=True):
-        if directorioDescarga==os.path.dirname(f):
+        if directorioDescarga != os.path.dirname(f)+'/':
             shutil.move(f, directorioDescarga)
             shutil.rmtree(os.path.dirname(f))
 
