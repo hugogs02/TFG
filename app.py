@@ -16,7 +16,7 @@ def run(produto, dataInicio, dataFin, rutaIn, rutaOut):
     except ValueError:
         sys.exit(f"O formato de datas e incorrecto")
 
-    if produto not in ["L2__CO____", "L2__NO2___", "L2__O3____", "L2__SO2___", "L2__CH4___"]:
+    if produto not in ["L2__CO____", "L2__NO2___", "L2__O3____", "L2__SO2___"]:
         sys.exit(f"O produto {produto} non e un produto valido.")
     elif parse(dataInicio)>parse(dataFin):
         sys.exit(f"A data de inicio debe ser anterior a data de fin.")
@@ -33,7 +33,7 @@ def run(produto, dataInicio, dataFin, rutaIn, rutaOut):
 if __name__ == '__main__':
     if len(sys.argv) != 6:
         print("Numero incorrecto de argumentos. [python3 app.py produto data_inicio data_fin ruta_descarga ruta_procesado]")
-        print("Produtos: L2__CO____, L2__NO2___, L2__O3____, L2__SO2___, L2__CH4___")
+        print("Produtos: L2__CO____, L2__NO2___, L2__O3____, L2__SO2___")
         print("Formato de data: YYYY-MM-DD")
         sys.exit()
 
