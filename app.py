@@ -27,9 +27,8 @@ def run(produto, dataInicio, dataFin, rutaIn, rutaOut):
 
     dd.obtenArquivos(aoi, dataInicio, dataFin, produto, rutaIn)
 
-    #dt.transformaL3(rutaIn, rutaOut, produto)
+    dt.transformaL3(rutaIn, rutaOut, produto)
 
-    #print("Data averaged correctly")
 
 if __name__ == '__main__':
     if len(sys.argv) != 6:

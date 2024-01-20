@@ -65,7 +65,7 @@ def obtenArquivos(aoi, inicio, fin, parametro, directorioDescarga):
     if not os.path.exists(directorioDescarga):
         os.mkdir(directorioDescarga)
     # make the request
-    jsonf=requests.get(f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;{aoi}') and Collection/Name eq 'SENTINEL-5P' and contains(Name,'S5P_OFFL_{parametro}') and ContentDate/Start gt {inicio}T00:00:00.000Z and ContentDate/Start lt {fin}T00:00:00.000Z&$top=100").json()
+    jsonf=requests.get(f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=OData.CSC.Intersects(area=geography'SRID=4326;{aoi}') and Collection/Name eq 'SENTINEL-5P' and contains(Name,'S5P_OFFL_{parametro}') and ContentDate/Start gt {inicio}T00:00:00.000Z and ContentDate/Start lt {fin}T23:59:59.000Z&$top=100").json()
     df = pd.DataFrame.from_dict(jsonf['value'])
 
     print(f"\nDescargaranse {len(df)} arquivos.")
@@ -78,6 +78,7 @@ def obtenArquivos(aoi, inicio, fin, parametro, directorioDescarga):
 
         if not (os.path.isfile(f"{directorioDescarga}{prName}.zip") or len(glob.glob(f"{directorioDescarga}{prName}*.nc"))!=0):
             descargaArquivo(prId, prName, directorioDescarga)
+
 
         if os.path.isfile(f"{directorioDescarga}{prName}.zip"):
             descomprimeArquivo(directorioDescarga, prName)

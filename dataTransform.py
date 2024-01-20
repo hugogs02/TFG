@@ -1,5 +1,10 @@
 import harp, os, glob
 
+postops = ";".join([
+    "bin()",
+    "squash(time, (latitude, longitude))"
+])
+
 def obtenListaProdutos(rutaIn, produto):
     lista=[]
     for f in glob.glob(rutaIn+'*'+produto+'*.nc'):
@@ -7,78 +12,39 @@ def obtenListaProdutos(rutaIn, produto):
 
     return lista
 
+# Funcion que transforma a nivel 3 os datos de NO2
+def transformaL3_NO2(arquivos, rutaOut):
+
+    ops= ";".join([
+        "tropospheric_NO2_column_number_density_validity>75",
+        "derive(tropospheric_NO2_column_number_density [Pmolec/cm2])",
+        "keep(latitude,longitude,latitude_bounds,longitude_bounds,tropospheric_NO2_column_number_density)"
+    ])
+
+    exops = ";".join([
+        "bin_spatial(2001, 35, 0.025, 3001, -10, 0.025)",
+        "exclude(latitude_bounds_weight,longitude_bounds_weight,weight,latitude_weight,longitude_weight)",
+        "derive(latitude{latitude})",
+        "derive(longitude{longitude})"
+    ])
+
+    prodslist=[]
+    for f in arquivos:
+        print(f"Importando {f}")
+        p=harp.import_product(f, operations=ops)
+        prodslist.append(p)
+
+    prods=harp.execute_operations(prodslist, operations=exops, post_operations=postops)
+
+    mes=arquivos[0].split("_")[-1][0:6]
+    harp.export_product(prods, (f"{rutaOut}NO2_{mes}.nc"), file_format="netCDF")
+    print(f"{rutaOut}NO2_{mes}.nc exportado")
+
+
 # Funcion que transforma a nivel 3 os datos de CO
 def transformaL3_CO(arquivos, rutaOut):
     return None
 
-# Funcion que transforma a nivel 3 os datos de NO2
-def transformaL3_NO2(arquivos, rutaOut):
-    operations = ";".join([
-        "tropospheric_NO2_column_number_density_validity>75",
-        "derive(surface_wind_speed {time} [m/s])",
-        "surface_wind_speed<5",
-        "keep(latitude_bounds,longitude_bounds,datetime_start,datetime_length,tropospheric_NO2_column_number_density, surface_wind_speed)",
-        "derive(datetime_start {time} [days since 2000-01-01])",
-        "derive(datetime_stop {time}[days since 2000-01-01])",
-        "exclude(datetime_length)",
-        "bin_spatial(300, -10, 0.05, 200, 35, 0.05)",
-        "derive(tropospheric_NO2_column_number_density [Pmolec/cm2])",
-        "derive(latitude {latitude})",
-        "derive(longitude {longitude})",
-        "count>0"
-    ])
-
-    reduce_operations = ";".join([
-        "squash(time, (latitude, longitude, latitude_bounds, longitude_bounds))",
-        "bin()"
-    ])
-
-    #Converted_NO2 = harp.import_product(arquivos, operations=operations, reduce_operations=reduce_operations)
-    for f in arquivos:
-        try:
-            #prods = harp.import_product(arquivos, operations=operations, reduce_operations=reduce_operations)
-            a=1
-        except harp.NoDataError:
-            print(f"No data en {f}")
-
-    print("All files imported")
-    #harp.export_product(Converted_NO2, ('2023-09-w1-n02.nc'), file_format="netCDF")
-    # harp.export_product(Converted_SO2, 'S5P_SO2_L3_averaged_31Jul-07Aug2023.nc',file_format="net")
-
-
-    """no2 = mean_no2.tropospheric_NO2_column_number_density.data
-    no2_description = mean_no2.tropospheric_NO2_column_number_density.description
-    no2_units = mean_no2.tropospheric_NO2_column_number_density.unit
-
-    gridlat = np.append(mean_no2.latitude_bounds.data[:,0], mean_no2.latitude_bounds.data[-1,1])
-    gridlon = np.append(mean_no2.longitude_bounds.data[:,0], mean_no2.longitude_bounds.data[-1,1])
-
-    colortable = cm.roma_r
-    vmin = 0
-    vmax = 14
-
-    # Setting basemap
-
-    boundaries=[-118.5, -117.5, 33.5, 34.0]
-
-    fig = plt.figure(figsize=(10,10))
-    bmap=cimgt.Stamen(style='toner-lite')
-    ax = plt.axes(projection=bmap.crs)
-    ax.set_extent(boundaries,crs = ccrs.PlateCarree())
-
-    zoom = 10
-    ax.add_image(bmap, zoom)
-
-    # Adding NO2 data
-
-    img = plt.pcolormesh(gridlon, gridlat, no2[0,:,:], vmin=vmin, vmax=vmax, cmap=colortable, transform=ccrs.PlateCarree(),alpha = 0.55)
-    ax.coastlines()
-
-    cbar = fig.colorbar(img, ax=ax,orientation='horizontal', fraction=0.04, pad=0.1)
-    cbar.set_label(f'{no2_description} [{no2_units}]')
-    cbar.ax.tick_params(labelsize=14)
-
-    plt.show()"""
 
 # Funcion que transforma a nivel 3 os datos de O3
 def transformaL3_O3(arquivos, rutaOut):
@@ -116,6 +82,8 @@ def transformaL3_CH4(arquivos, rutaOut):
 
 # Funcion xeral para transformar a nivel 3 o arquivo en 'ruta' para o produto 'produto'
 def transformaL3 (rutaIn, rutaOut, produto):
+    if not os.path.exists(rutaOut):
+        os.mkdir(rutaOut)
     listaArquivos=obtenListaProdutos(rutaIn, produto)
 
     if produto == "L2__CO____":
