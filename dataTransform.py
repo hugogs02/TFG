@@ -7,7 +7,7 @@ postops = ";".join([
 
 def obtenListaProdutos(rutaIn, produto):
     lista=[]
-    for f in glob.glob(rutaIn+'*'+produto+'*.nc'):
+    for f in sorted(glob.glob(rutaIn+'*'+produto+'*.nc')):
         lista.append(f)
 
     return lista
