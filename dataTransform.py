@@ -22,7 +22,7 @@ def transformaL3_NO2(arquivos, rutaOut):
     ])
 
     exops = ";".join([
-        "bin_spatial(2001, 35, 0.025, 3001, -10, 0.025)",
+        "bin_spatial(2001, 35, 0.005, 3001, -10, 0.005)",
         "exclude(latitude_bounds_weight,longitude_bounds_weight,weight,latitude_weight,longitude_weight)",
         "derive(latitude{latitude})",
         "derive(longitude{longitude})"
