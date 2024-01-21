@@ -129,7 +129,7 @@ def transformaL3 (rutaIn, rutaOut, produto):
         os.mkdir(rutaOut)
     listaArquivos=obtenListaProdutos(rutaIn, produto)
 
-    if produto == "L2__CO____":
+    if   produto == "L2__CO____":
         transformaL3_CO(listaArquivos, rutaOut)
     elif produto == "L2__NO2___":
         transformaL3_NO2(listaArquivos, rutaOut)
@@ -139,3 +139,6 @@ def transformaL3 (rutaIn, rutaOut, produto):
         transformaL3_SO2(listaArquivos, rutaOut)
     else:
         print("Produto incorrecto para transformar")
+
+    for f in listaArquivos:
+        os.remove(f)
