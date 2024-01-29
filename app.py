@@ -23,7 +23,7 @@ def run(produto, dataInicio, dataFin, rutaIn, rutaOut):
 
 
     # Area de interese da busca
-    aoi= "POLYGON((-9.647785 35.912135,-9.647785 44.230843,4.916224 44.230843,4.916224 4.916224,-9.647785 35.912135))"
+    aoi= "POLYGON((-9.647785 35.912135,-9.647785 44.230843,4.916224 44.230843,4.916224 35.912135,-9.647785 35.912135))"
 
     dd.obtenArquivos(aoi, dataInicio, dataFin, produto, rutaIn)
 

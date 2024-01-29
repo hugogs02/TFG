@@ -12,6 +12,7 @@ def obtenListaProdutos(rutaIn, produto):
 
     return lista
 
+
 # Funcion que transforma a nivel 3 os datos de NO2
 def transformaL3_NO2(arquivos, rutaOut):
     ops= ";".join([
@@ -37,6 +38,7 @@ def transformaL3_NO2(arquivos, rutaOut):
 
     mes=arquivos[0].split("_")[-1][0:6]
     harp.export_product(prods, (f"{rutaOut}NO2_{mes}.nc"), file_format="netCDF")
+    mes=202306
     print(f"{rutaOut}NO2_{mes}.nc exportado")
 
 
@@ -94,6 +96,7 @@ def transformaL3_O3(arquivos, rutaOut):
     mes = arquivos[0].split("_")[-1][0:6]
     harp.export_product(prods, (f"{rutaOut}O3_{mes}.nc"), file_format="netCDF")
     print(f"{rutaOut}O3_{mes}.nc exportado")
+
 
 # Funcion que transforma a nivel 3 os datos de SO2
 def transformaL3_SO2(arquivos, rutaOut):
